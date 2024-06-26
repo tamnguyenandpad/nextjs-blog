@@ -1,0 +1,4 @@
+_extends: nextjs-blog:.github/release-drafter.yml
+tag-prefix: owner
+include-paths:
+  - 'apps/owner/'

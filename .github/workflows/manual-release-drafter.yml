@@ -1,4 +1,4 @@
-name: Release Drafter Manual
+name: Manual Generate Release Tag
 
 on:
   workflow_dispatch:
@@ -10,7 +10,8 @@ on:
         options:
           - remote
           - client-owner
-          - measurement
+          - owner
+          # Todo: Add other project options
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -24,24 +25,10 @@ jobs:
         run: echo "version=$(date +'%Y%m%d.%H%M%S')" >> $GITHUB_OUTPUT
         env:
           TZ: "Asia/Tokyo"
-      - name: '[Remote] Draft release'
+          
+      - name: '[${{ inputs.target }}] Draft release'
         uses: release-drafter/release-drafter@3f0f87098bd6b5c5b9a36d49c41d998ea58f9348 # v6.0.0
-        if: ${{ inputs.target == 'remote' }}
         with:
-          config-name: release-drafter-remote.yml
-          name: remote_${{ steps.calver.outputs.version }}_release
-          tag: remote_${{ steps.calver.outputs.version }}_release
-      - name: '[Client Owner] Draft release'
-        uses: release-drafter/release-drafter@3f0f87098bd6b5c5b9a36d49c41d998ea58f9348 # v6.0.0
-        if: ${{ inputs.target == 'client-owner' }}
-        with:
-          config-name: release-drafter-client-owner.yml
-          name: client-owner_${{ steps.calver.outputs.version }}_release
-          tag: client-owner_${{ steps.calver.outputs.version }}_release
-      - name: '[Measurement] Draft release'
-        uses: release-drafter/release-drafter@3f0f87098bd6b5c5b9a36d49c41d998ea58f9348 # v6.0.0
-        if: ${{ inputs.target == 'measurement' }}
-        with:
-          config-name: release-drafter-measurement.yml
-          name: measurement_${{ steps.calver.outputs.version }}_release
-          tag: measurement_${{ steps.calver.outputs.version }}_release
+          config-name: release-drafter-${{ inputs.target }}.yml
+          name: ${{ inputs.target }}_${{ steps.calver.outputs.version }}_release
+          tag: ${{ inputs.target }}_${{ steps.calver.outputs.version }}_release
